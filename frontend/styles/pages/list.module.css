@@ -1,0 +1,39 @@
+.todo__input {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.todo__input input,
+.todo__input textarea {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.todo__output ul {
+  list-style: none;
+  padding: 0;
+}
+
+.todo__output li {
+  margin-bottom: 10px;
+}
+
+.todo__output h3 {
+  margin: 0;
+}
+
+.todo__output p {
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.todo__output button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
