@@ -8,22 +8,56 @@ export default function ListPage({
   const [newTodo, setNewTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
 
-  const addTodo = () => {
+  const addTodo = async () => {
     if (newTodo.trim() !== "") {
       const todo = {
-        id: Date.now(),
         title: newTodo,
         description: newTodoDescription,
       };
-      setTodos([...todos, todo]);
-      setNewTodo("");
-      setNewTodoDescription("");
+
+      try {
+        const response = await fetch("http://localhost:3001/api/todos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(todo),
+        });
+
+        if (response.ok) {
+          const savedTodo = await response.json();
+          setTodos([...todos, savedTodo]);
+          setNewTodo("");
+          setNewTodoDescription("");
+        } else {
+          console.error("Failed to save todo");
+        }
+      } catch (error) {
+        console.error("Failed to save todo", error);
+      }
     }
   };
 
-  const deleteTodo = (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
-    setTodos(updatedTodos);
+  const deleteTodo = async (index) => {
+    const todo = todos[index];
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/todos/${todo.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        const updatedTodos = todos.filter((_, i) => i !== index);
+        setTodos(updatedTodos);
+      } else {
+        console.error("Failed to delete todo");
+      }
+    } catch (error) {
+      console.error("Failed to delete todo", error);
+    }
   };
 
   return (
