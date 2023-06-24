@@ -1,8 +1,10 @@
 import { useState } from "react";
 import styles from "../../styles/pages/list.module.css";
 
-export default function ListPage(props) {
-  const [todos, setTodos] = useState(props.initialTodos);
+export default function ListPage({
+  initialTodos = [], //default value
+}) {
+  const [todos, setTodos] = useState(initialTodos);
   const [newTodo, setNewTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
 
@@ -58,7 +60,8 @@ export default function ListPage(props) {
 
 export async function getServerSideProps() {
   // Simulating fetching todos from an API endpoint
-  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  const response = await fetch("http://localhost:3001/api/todos");
   const initialTodos = await response.json();
 
   return {
