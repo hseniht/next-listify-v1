@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 
 export default function ListPage({
@@ -16,7 +17,7 @@ export default function ListPage({
       };
 
       try {
-        const response = await fetch("http://localhost:3001/api/todos", {
+        const response = await fetch(API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -42,12 +43,9 @@ export default function ListPage({
     const todo = todos[index];
 
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/todos/${todo.id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${API_URL}/${todo.id}`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         const updatedTodos = todos.filter((_, i) => i !== index);
@@ -80,7 +78,7 @@ export default function ListPage({
       <section className="todo__output">
         <ul>
           {todos.map((todo, index) => (
-            <li key={todo.id}>
+            <li key={todo._id}>
               <h3>{todo.title}</h3>
               <p>{todo.description}</p>
               <button onClick={() => deleteTodo(index)}>Delete</button>
@@ -95,7 +93,7 @@ export default function ListPage({
 export async function getServerSideProps() {
   // Simulating fetching todos from an API endpoint
   // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-  const response = await fetch("http://localhost:3001/api/todos");
+  const response = await fetch(API_URL);
   const initialTodos = await response.json();
 
   return {
