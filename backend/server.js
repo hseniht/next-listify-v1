@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 const port = 3001; // or any other port number you prefer
 
@@ -58,20 +58,33 @@ app.get("/notepad/todos", async (req, res) => {
   }
 });
 
-app.post("/notepad/todos", (req, res) => {
-  const { title, description } = req.body;
-  const todo = {
-    id: Date.now(), //generate unique id
-    title,
-    description,
-  };
-
-  todos.push(todo);
-  res.status(201).json(todo);
+app.post("/notepad/todos", async (req, res) => {
+  const todo = req.body;
+  try {
+    const result = await todoCollection.insertOne(todo);
+    const savedTodo = { ...todo, _id: result.insertedId };
+    res.status(201).json(savedTodo);
+  } catch (error) {
+    console.error("Failed to save todo", error);
+    res.status(500).json({ error: "Failed to create todos note" });
+  }
 });
 
-app.delete("/notepad/todos/:id", (req, res) => {
+app.delete("/notepad/todos/:id", async (req, res) => {
   const { id } = req.params;
-  todos = todos.filter((todo) => todo.id !== parseInt(id));
-  res.sendStatus(204);
+
+  try {
+    const result = await todoCollection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 1) {
+      res.sendStatus(204);
+      //NOTE: after deleting should be 204 (no content) rather than 200 (success)
+    } else {
+      res.status(404).json({ error: "Todo not found" });
+      // NOTE: 404 instead of 500 (server error)
+      // because the error is coming from the client and not from the server.
+    }
+  } catch (error) {
+    console.error("Failed to delete todo", error);
+    res.status(500).json({ error: "Failed to delete todo" });
+  }
 });

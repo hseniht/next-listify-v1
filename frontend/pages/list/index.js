@@ -43,7 +43,7 @@ export default function ListPage({
     const todo = todos[index];
 
     try {
-      const response = await fetch(`${API_URL}/${todo.id}`, {
+      const response = await fetch(`${API_URL}/${todo._id}`, {
         method: "DELETE",
       });
 
