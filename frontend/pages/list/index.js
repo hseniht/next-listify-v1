@@ -93,12 +93,26 @@ export default function ListPage({
 export async function getServerSideProps() {
   // Simulating fetching todos from an API endpoint
   // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-  const response = await fetch(API_URL);
-  const initialTodos = await response.json();
+  let initialTodos = [];
 
-  return {
-    props: {
-      initialTodos,
-    },
-  };
+  try {
+    const response = await fetch(API_URL);
+    if (response.ok) {
+      initialTodos = await response.json();
+    }
+    return {
+      props: {
+        initialTodos,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    // Handle the error
+    return {
+      props: {
+        initialTodos,
+        error: "Failed to fetch todos",
+      },
+    };
+  }
 }
