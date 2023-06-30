@@ -88,3 +88,19 @@ app.delete("/notepad/todos/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete todo" });
   }
 });
+
+app.get("/notepad/todos/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const todo = await todoCollection.findOne({ _id: new ObjectId(id) });
+    if (todo) {
+      res.json(todo);
+    } else {
+      res.status(404).json({ error: "Todo not found" });
+    }
+  } catch (error) {
+    console.error("Failed to get todo", error);
+    res.status(500).json({ error: "Failed to get todo" });
+  }
+});
