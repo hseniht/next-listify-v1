@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
+import { ModalBox } from "../../components/ui/ui";
 
 export default function ListPage({
   initialTodos = [], //default value
 }) {
+  const [showEdit, setShowEdit] = useState(false);
   const [todos, setTodos] = useState(initialTodos);
   const [newTodo, setNewTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
@@ -75,10 +77,18 @@ export default function ListPage({
         ></textarea>
         <button onClick={addTodo}>Add Todo</button>
       </section>
-      <section className="todo__output">
-        <ul>
+      {showEdit && (
+        <ModalBox onClose={() => setShowEdit(false)}>
+          <div>Edit notes</div>
+        </ModalBox>
+      )}
+      <section className={styles.todo__output}>
+        <ul className={styles["todo__output--wrapper"]}>
           {todos.map((todo, index) => (
-            <li key={todo._id}>
+            <li className={styles["todo__output--list"]} key={todo._id}>
+              <i onClick={() => setShowEdit(true)} style={{ float: "right" }}>
+                +
+              </i>
               <h3>{todo.title}</h3>
               <p>{todo.description}</p>
               <button onClick={() => deleteTodo(index)}>Delete</button>

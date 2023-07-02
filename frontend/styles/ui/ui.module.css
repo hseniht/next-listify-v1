@@ -1,0 +1,20 @@
+.modal__overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.modal__box {
+  background-color: white;
+  width: 50%;
+  height: 50%;
+  transform: translate(50%, 50%);
+  padding: 10px;
+}
+.modal__box--close-btn {
+  float: right;
+}
+.modal__box--content {
+  /* background-color: green; */
+}
