@@ -9,6 +9,7 @@ export default function ListPage({
   const [showEdit, setShowEdit] = useState(false);
   const [todos, setTodos] = useState(initialTodos);
   const [newTodo, setNewTodo] = useState("");
+  const [todo, setTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
 
   const addTodo = async () => {
@@ -60,6 +61,62 @@ export default function ListPage({
     }
   };
 
+  const handleEdit = async (id) => {
+    console.log("tk event", id);
+    setTodo(""); //reset
+    setShowEdit(true);
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        console.log("tk resp is", response);
+        const todo = await response.json();
+        setTodo(todo);
+        // const editTodo = response
+        // setTodos(updatedTodos);
+      } else {
+        console.error("Failed to get a todo");
+      }
+    } catch (error) {
+      console.error("Failed to get a todo", error);
+    }
+  };
+
+  const handleSave = async () => {
+    // const updatedTodo = todo;
+    const { _id, title, description } = todo;
+
+    const updatedTodo = {
+      title: title,
+      description: description,
+    };
+
+    try {
+      const response = await fetch(`${API_URL}/${_id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTodo),
+      });
+
+      if (response.ok) {
+        const savedTodo = await response.json();
+        setShowEdit(false);
+      } else {
+        console.error("Failed to save todo");
+      }
+    } catch (error) {
+      console.error("Failed to save todo", error);
+    }
+  };
+
+  const handleInputChange = (e, field) => {
+    setTodo({ ...todo, [field]: e.target.value });
+  };
+
   return (
     <div>
       <h1>Todo List</h1>
@@ -79,16 +136,38 @@ export default function ListPage({
       </section>
       {showEdit && (
         <ModalBox onClose={() => setShowEdit(false)}>
-          <div>Edit notes</div>
+          <div>Edit</div>
+          {!todo ? (
+            <div>Loading ...</div>
+          ) : (
+            <section className={styles.todo__input}>
+              <input
+                type="text"
+                value={todo.title}
+                onChange={(e) => handleInputChange(e, "title")}
+                placeholder="Enter a new todo title..."
+              />
+              <textarea
+                value={todo.description}
+                onChange={(e) => handleInputChange(e, "description")}
+                placeholder="Enter a new todo description..."
+              ></textarea>
+              <button onClick={handleSave}>Save edits</button>
+            </section>
+          )}
         </ModalBox>
       )}
       <section className={styles.todo__output}>
         <ul className={styles["todo__output--wrapper"]}>
           {todos.map((todo, index) => (
             <li className={styles["todo__output--list"]} key={todo._id}>
-              <i onClick={() => setShowEdit(true)} style={{ float: "right" }}>
+              <button
+                value={todo._id}
+                onClick={(e) => handleEdit(e.target.value)}
+                style={{ float: "right" }}
+              >
                 +
-              </i>
+              </button>
               <h3>{todo.title}</h3>
               <p>{todo.description}</p>
               <button onClick={() => deleteTodo(index)}>Delete</button>

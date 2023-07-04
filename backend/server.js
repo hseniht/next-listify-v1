@@ -9,7 +9,7 @@ app.use(express.json());
 // Enable CORS
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE");
+  res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
@@ -102,5 +102,27 @@ app.get("/notepad/todos/:id", async (req, res) => {
   } catch (error) {
     console.error("Failed to get todo", error);
     res.status(500).json({ error: "Failed to get todo" });
+  }
+});
+
+app.patch("/notepad/todos/:id", async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const result = await todoCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updates }
+    );
+    if (result.matchedCount === 1) {
+      res.sendStatus(204); // or can use 200 to return back content
+    } else {
+      res.status(404).json({ error: "Todo not found" });
+      // NOTE: 404 instead of 500 (server error)
+      // because the error is coming from the client and not from the server.
+    }
+  } catch (error) {
+    console.error("Failed to update todo", error);
+    res.status(500).json({ error: "Failed to update todo" });
   }
 });
