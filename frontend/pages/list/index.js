@@ -12,6 +12,23 @@ export default function ListPage({
   const [todo, setTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
 
+  const handleFetch = async () => {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        const todos = await response.json();
+        setTodos(todos);
+      } else {
+        console.error("Failed to fetch todos");
+      }
+    } catch (error) {
+      console.error("Failed to fetch todos", error);
+    }
+  };
+
   const addTodo = async () => {
     if (newTodo.trim() !== "") {
       const todo = {
@@ -62,7 +79,6 @@ export default function ListPage({
   };
 
   const handleEdit = async (id) => {
-    console.log("tk event", id);
     setTodo(""); //reset
     setShowEdit(true);
     try {
@@ -71,7 +87,6 @@ export default function ListPage({
       });
 
       if (response.ok) {
-        console.log("tk resp is", response);
         const todo = await response.json();
         setTodo(todo);
         // const editTodo = response
@@ -103,8 +118,8 @@ export default function ListPage({
       });
 
       if (response.ok) {
-        const savedTodo = await response.json();
         setShowEdit(false);
+        await handleFetch();
       } else {
         console.error("Failed to save todo");
       }
