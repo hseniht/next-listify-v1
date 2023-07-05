@@ -133,8 +133,8 @@ export default function ListPage({
   };
 
   return (
-    <div>
-      <h1>Todo List</h1>
+    <div className={styles.todo}>
+      <h1 className={styles.todo__heading}>Todo List</h1>
       <section className={styles.todo__input}>
         <input
           type="text"

@@ -1,6 +1,18 @@
+.todo {
+  height: 100%;
+}
+
+.todo__heading {
+  height: 80px;
+  padding: 20px;
+  margin: 0;
+}
+
 .todo__input {
   width: 80%;
   margin: 0 auto;
+  padding: 20px;
+  height: 180px;
 }
 
 .todo__input input,
@@ -10,6 +22,15 @@
   padding: 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
+}
+
+.todo__output {
+  height: calc(100% - (80px + 180px + 60px));
+  width: 80%;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid;
 }
 
 .todo__output ul {
