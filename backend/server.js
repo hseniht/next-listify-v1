@@ -49,8 +49,14 @@ app.listen(port, () => {
 });
 
 app.get("/notepad/todos", async (req, res) => {
+  const page = req.query.page || 0; // defaults zero if not specified
+  const listPerPage = 3;
   try {
-    const todos = await todoCollection.find().toArray();
+    const todos = await todoCollection
+      .find()
+      // .skip(page * listPerPage)
+      // .limit(listPerPage)
+      .toArray();
     res.json(todos);
   } catch (error) {
     console.error("Failed to fetch todos", error);
