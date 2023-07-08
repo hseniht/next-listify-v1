@@ -2,6 +2,7 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 const port = 3001; // or any other port number you prefer
+require("dotenv").config(); //for .env variables
 
 // Enable JSON parsing for incoming requests (middleware)
 app.use(express.json());
@@ -20,7 +21,8 @@ app.use((req, res, next) => {
 //   { id: 2, title: "Todo 2", description: "Description 2" },
 // ];
 
-const url = "mongodb://localhost:27017";
+// const url = "mongodb://localhost:27017";
+const url = process.env.MONGODB_CONNECTION_STRING;
 const dbName = "notepad";
 const collectionName = "todos";
 
