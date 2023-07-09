@@ -61,22 +61,28 @@ export default function ListPage({
     }
   };
 
-  const deleteTodo = async (index) => {
-    const todo = todos[index];
+  const deleteTodo = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this item?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: "DELETE",
+        });
 
-    try {
-      const response = await fetch(`${API_URL}/${todo._id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        const updatedTodos = todos.filter((_, i) => i !== index);
-        setTodos(updatedTodos);
-      } else {
-        console.error("Failed to delete todo");
+        if (response.ok) {
+          console.log("Succesfully deleted a todo item");
+          //TODO if:
+          // Network performance is a concern? -> Filter out deleted record from local state.
+          // Data consistency is crucial? -> Update state from backend.
+          await handleFetch();
+        } else {
+          console.error("Failed to delete todo");
+        }
+      } catch (error) {
+        console.error("Failed to delete todo", error);
       }
-    } catch (error) {
-      console.error("Failed to delete todo", error);
     }
   };
 
@@ -147,7 +153,7 @@ export default function ListPage({
         <Tooltip title="delete">
           <Button
             danger
-            onClick={() => deleteTodo("")}
+            onClick={() => deleteTodo(record._id)}
             icon={<DeleteOutlined />}
           />
         </Tooltip>
