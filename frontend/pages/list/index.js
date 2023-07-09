@@ -2,6 +2,8 @@ import { useState } from "react";
 import { API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
+import { Button, Table, Tooltip } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export default function ListPage({
   initialTodos = [], //default value
@@ -132,6 +134,46 @@ export default function ListPage({
     setTodo({ ...todo, [field]: e.target.value });
   };
 
+  const tableActions = (param1, record) => {
+    return (
+      <div>
+        <Tooltip title="edit">
+          <Button
+            value={record._id}
+            onClick={(e) => handleEdit(record._id)}
+            icon={<EditOutlined />}
+          />
+        </Tooltip>
+        <Tooltip title="delete">
+          <Button
+            danger
+            onClick={() => deleteTodo("")}
+            icon={<DeleteOutlined />}
+          />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Actions",
+      dataIndex: "action",
+      key: "action",
+      render: tableActions,
+    },
+  ];
+
   return (
     <div className={styles.todo}>
       <h1 className={styles.todo__heading}>Todo List</h1>
@@ -148,6 +190,13 @@ export default function ListPage({
           placeholder="Enter a new todo description..."
         ></textarea>
         <button onClick={addTodo}>Add Todo</button>
+      </section>
+      <section className="list_todo_table">
+        <Table
+          pagination={{ pageSize: 5 }}
+          columns={columns}
+          dataSource={todos}
+        />
       </section>
       {showEdit && (
         <ModalBox onClose={() => setShowEdit(false)}>
