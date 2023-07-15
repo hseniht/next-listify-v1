@@ -2,9 +2,10 @@ import { useState } from "react";
 import { API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
+import { Section } from "../../components/ui/layout";
 import { Button, Table, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-
+import { TodoList } from "../../components/views/list";
 export default function ListPage({
   initialTodos = [], //default value
 }) {
@@ -183,7 +184,7 @@ export default function ListPage({
   return (
     <div className={styles.todo}>
       <h1 className={styles.todo__heading}>Todo List</h1>
-      <section className={styles.todo__input}>
+      <Section className={styles.todo__input}>
         <input
           type="text"
           value={newTodo}
@@ -196,21 +197,21 @@ export default function ListPage({
           placeholder="Enter a new todo description..."
         ></textarea>
         <button onClick={addTodo}>Add Todo</button>
-      </section>
-      <section className="list_todo_table">
+      </Section>
+      <Section className={styles.todo_table}>
         <Table
           pagination={{ pageSize: 5 }}
           columns={columns}
           dataSource={todos}
         />
-      </section>
+      </Section>
       {showEdit && (
         <ModalBox onClose={() => setShowEdit(false)}>
           <div>Edit</div>
           {!todo ? (
             <div>Loading ...</div>
           ) : (
-            <section className={styles.todo__input}>
+            <Section className={styles.todo__input}>
               <input
                 type="text"
                 value={todo.title}
@@ -223,28 +224,13 @@ export default function ListPage({
                 placeholder="Enter a new todo description..."
               ></textarea>
               <button onClick={handleSave}>Save edits</button>
-            </section>
+            </Section>
           )}
         </ModalBox>
       )}
-      <section className={styles.todo__output}>
-        <ul className={styles["todo__output--wrapper"]}>
-          {todos.map((todo, index) => (
-            <li className={styles["todo__output--list"]} key={todo._id}>
-              <button
-                value={todo._id}
-                onClick={(e) => handleEdit(e.target.value)}
-                style={{ float: "right" }}
-              >
-                +
-              </button>
-              <h3>{todo.title}</h3>
-              <p>{todo.description}</p>
-              <button onClick={() => deleteTodo(index)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* <Section className={styles.todo__output}>
+        <TodoList todos={todos} onEdit={handleEdit} onDelete={deleteTodo} />
+      </Section> */}
     </div>
   );
 }
