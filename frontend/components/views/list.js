@@ -35,13 +35,13 @@ const OPTION = [
   { _id: "s3", label: "Option 3", name: "NmOp 3" },
 ];
 
-export const TodoTags = () => {
-  const [selectedItems, setSelectedItems] = useState([]);
+export const TodoTags = ({ items, selectedItems, onSelectItem }) => {
+  // const [selectedItems, setSelectedItems] = useState([]);
   // const filteredOptions = OPTIONS.filter((o) => !selectedItems.includes(o));
   // const filteredOptions = options3.filter((o) => !selectedItems.includes(o));
 
-  const handleSelect = (p1, p2) => {
-    setSelectedItems(p1);
+  const handleSelect = (value, option) => {
+    setSelectedItems(value);
   };
 
   return (
@@ -50,14 +50,15 @@ export const TodoTags = () => {
       optionLabelProp="name" //which option field to display
       placeholder="Tags"
       value={selectedItems}
-      onChange={handleSelect}
+      // onChange={handleSelect}
+      onChange={onSelectItem}
       style={{
         width: "100%",
       }}
     >
-      {OPTION.map((option) => (
-        <Option key={option._id} value={option._id} name={option.name}>
-          {option.name}
+      {items.map((item) => (
+        <Option key={item._id} value={item._id} name={item.name}>
+          {item.name}
         </Option>
       ))}
     </Select>

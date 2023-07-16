@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_URL } from "../../constants/constants";
+import { TODOS_API_URL, TAGS_API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
 import { Section } from "../../components/ui/layout";
@@ -9,16 +9,19 @@ import { TodoList } from "../../components/views/list";
 import { TodoTags } from "../../components/views/list";
 export default function ListPage({
   initialTodos = [], //default value
+  initialTags = [],
 }) {
   const [showEdit, setShowEdit] = useState(false);
   const [todos, setTodos] = useState(initialTodos);
+  const [tags, setTags] = useState(initialTags);
   const [newTodo, setNewTodo] = useState("");
   const [todo, setTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
+  const [newTags, setNewTags] = useState([]);
 
   const handleFetch = async () => {
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${TODOS_API_URL}`, {
         method: "GET",
       });
 
@@ -41,7 +44,7 @@ export default function ListPage({
       };
 
       try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(TODOS_API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -69,7 +72,7 @@ export default function ListPage({
     );
     if (confirmDelete) {
       try {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${TODOS_API_URL}/${id}`, {
           method: "DELETE",
         });
 
@@ -92,7 +95,7 @@ export default function ListPage({
     setTodo(""); //reset
     setShowEdit(true);
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${TODOS_API_URL}/${id}`, {
         method: "GET",
       });
 
@@ -111,15 +114,19 @@ export default function ListPage({
 
   const handleSave = async () => {
     // const updatedTodo = todo;
-    const { _id, title, description } = todo;
+    const { _id, title, description, tags } = todo;
+    console.log("tk description", description);
+    console.log("tk tags", tags);
 
     const updatedTodo = {
       title: title,
       description: description,
+      tags: tags || [], // Set default value to an empty array if tags is undefined or null
     };
 
+    console.log("tk updated toDo", updatedTodo);
     try {
-      const response = await fetch(`${API_URL}/${_id}`, {
+      const response = await fetch(`${TODOS_API_URL}/${_id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -198,7 +205,11 @@ export default function ListPage({
           placeholder="Enter a new todo description..."
         ></textarea>
         {/* //tags */}
-        <TodoTags />
+        <TodoTags
+          items={tags}
+          selectedItems={newTags}
+          onSelectItem={setNewTags}
+        />
         <button onClick={addTodo}>Add Todo</button>
       </Section>
       <Section className={styles.todo_table}>
@@ -243,15 +254,22 @@ export async function getServerSideProps() {
   // Simulating fetching todos from an API endpoint
   // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
   let initialTodos = [];
+  let initialTags = [];
 
   try {
-    const response = await fetch(API_URL);
-    if (response.ok) {
-      initialTodos = await response.json();
+    const todosResponse = await fetch(TODOS_API_URL);
+    const tagsResponse = await fetch(TAGS_API_URL);
+
+    if (todosResponse.ok) {
+      initialTodos = await todosResponse.json();
+    }
+    if (tagsResponse.ok) {
+      initialTags = await tagsResponse.json();
     }
     return {
       props: {
         initialTodos,
+        initialTags,
       },
     };
   } catch (error) {
@@ -260,6 +278,7 @@ export async function getServerSideProps() {
     return {
       props: {
         initialTodos,
+        initialTags,
         error: "Failed to fetch todos",
       },
     };

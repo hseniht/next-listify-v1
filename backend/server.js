@@ -116,7 +116,13 @@ app.get("/notepad/todos/:id", async (req, res) => {
 
 app.patch("/notepad/todos/:id", async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const { title, description, tags } = req.body; // Extract the "tags" field from the request body
+
+  const updates = {
+    title: title,
+    description: description,
+    tags: tags || [], // Set default value to an empty array if tags is undefined or null
+  };
 
   try {
     const result = await todoCollection.updateOne(
