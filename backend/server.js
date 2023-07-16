@@ -24,17 +24,18 @@ app.use((req, res, next) => {
 // const url = "mongodb://localhost:27017";
 const url = process.env.MONGODB_CONNECTION_STRING;
 const dbName = "notepad";
-const collectionName = "todos";
 
 let dbClient;
 let todoCollection;
+let tagsCollection;
 
 // Establish database connection
 async function connectToDatabase() {
   try {
     dbClient = await MongoClient.connect(url);
     const db = dbClient.db(dbName);
-    todoCollection = db.collection(collectionName);
+    todoCollection = db.collection("todos");
+    tagsCollection = db.collection("tags");
     console.log("Connected to the database");
   } catch (error) {
     console.error("Failed to connect to the database", error);
@@ -132,5 +133,16 @@ app.patch("/notepad/todos/:id", async (req, res) => {
   } catch (error) {
     console.error("Failed to update todo", error);
     res.status(500).json({ error: "Failed to update todo" });
+  }
+});
+
+//tags
+app.get("/notepad/tags", async (req, res) => {
+  try {
+    const tags = await tagsCollection.find().toArray();
+    res.json(tags);
+  } catch (error) {
+    console.error("Failed to fetch tags", error);
+    res.status(500).json({ error: "Failed to fetch tags" });
   }
 });

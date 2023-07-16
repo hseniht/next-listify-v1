@@ -6,6 +6,7 @@ import { Section } from "../../components/ui/layout";
 import { Button, Table, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { TodoList } from "../../components/views/list";
+import { TodoTags } from "../../components/views/list";
 export default function ListPage({
   initialTodos = [], //default value
 }) {
@@ -196,6 +197,8 @@ export default function ListPage({
           onChange={(e) => setNewTodoDescription(e.target.value)}
           placeholder="Enter a new todo description..."
         ></textarea>
+        {/* //tags */}
+        <TodoTags />
         <button onClick={addTodo}>Add Todo</button>
       </Section>
       <Section className={styles.todo_table}>
@@ -203,6 +206,7 @@ export default function ListPage({
           pagination={{ pageSize: 5 }}
           columns={columns}
           dataSource={todos}
+          rowKey={"_id"} //unique field from out dataset
         />
       </Section>
       {showEdit && (
