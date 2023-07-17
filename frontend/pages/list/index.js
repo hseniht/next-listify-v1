@@ -41,6 +41,7 @@ export default function ListPage({
       const todo = {
         title: newTodo,
         description: newTodoDescription,
+        tags: newTags
       };
 
       try {

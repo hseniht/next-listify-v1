@@ -70,7 +70,21 @@ app.get("/notepad/todos", async (req, res) => {
 app.post("/notepad/todos", async (req, res) => {
   const todo = req.body;
   try {
-    const result = await todoCollection.insertOne(todo);
+    const tags = await tagsCollection.find().toArray();
+
+    //array of selected tags id
+    const selectedTagsId = todo.tags;
+
+    //map all tags that has matching ids
+    const filteredTags = tags.filter((tag) =>
+      selectedTagsId.includes(tag._id.toString())
+    );
+    const newTodo = {
+      title: todo.title,
+      description: todo.description,
+      tags: filteredTags,
+    };
+    const result = await todoCollection.insertOne(newTodo);
     const savedTodo = { ...todo, _id: result.insertedId };
     res.status(201).json(savedTodo);
   } catch (error) {
