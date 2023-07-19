@@ -1,7 +1,7 @@
 //Todo: Add modular list component here
 import { useState } from "react";
 import styles from "../../styles/pages/list.module.css";
-import { Button, Select, Space, Table, Tooltip } from "antd";
+import { Button, Select, Space, Table, Tag, Tooltip } from "antd";
 // import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
@@ -88,6 +88,18 @@ const tableActions = (param1, record) => {
   );
 };
 
+const tagColumn = (_, { tags = [] }) => {
+  return (
+    <>
+      {tags.map((item) => (
+        <Tag key={item._id} color={item.color} bordered={false}>
+          {item.name}
+        </Tag>
+      ))}
+    </>
+  );
+};
+
 const columns = [
   {
     title: "Title",
@@ -98,6 +110,12 @@ const columns = [
     title: "Description",
     dataIndex: "description",
     key: "description",
+  },
+  {
+    title: "Tags",
+    dataIndex: "tags",
+    key: "tags",
+    render: tagColumn,
   },
   {
     title: "Actions",
