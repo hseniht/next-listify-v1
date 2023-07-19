@@ -132,13 +132,18 @@ app.patch("/notepad/todos/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description, tags } = req.body; // Extract the "tags" field from the request body
 
-  const updates = {
-    title: title,
-    description: description,
-    tags: tags || [], // Set default value to an empty array if tags is undefined or null
-  };
-
   try {
+    const tagsC = await tagsCollection.find().toArray();
+    const filteredTags = tagsC.filter((tag) =>
+      tags.includes(tag._id.toString())
+    );
+
+    const updates = {
+      title: title,
+      description: description,
+      tags: filteredTags || [], // Set default value to an empty array if tags is undefined or null
+    };
+
     const result = await todoCollection.updateOne(
       { _id: new ObjectId(id) },
       { $set: updates }

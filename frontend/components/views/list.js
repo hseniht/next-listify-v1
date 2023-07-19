@@ -67,65 +67,65 @@ export const TodoTags = ({ items, selectedItems, onSelectItem }) => {
 };
 
 //Todo-list Table
-const tableActions = (param1, record) => {
-  return (
-    <div>
-      <Tooltip title="edit">
-        <Button
-          value={record._id}
-          onClick={(e) => handleEdit(record._id)}
-          icon={<EditOutlined />}
-        />
-      </Tooltip>
-      <Tooltip title="delete">
-        <Button
-          danger
-          onClick={() => deleteTodo(record._id)}
-          icon={<DeleteOutlined />}
-        />
-      </Tooltip>
-    </div>
-  );
-};
+export const TodoListTable = ({ dataSource, onEdit, onDelete, ...props }) => {
+  const tableActions = (param1, record) => {
+    return (
+      <div>
+        <Tooltip title="edit">
+          <Button
+            value={record._id}
+            onClick={(e) => onEdit(record._id)}
+            icon={<EditOutlined />}
+          />
+        </Tooltip>
+        <Tooltip title="delete">
+          <Button
+            danger
+            onClick={() => onDelete(record._id)}
+            icon={<DeleteOutlined />}
+          />
+        </Tooltip>
+      </div>
+    );
+  };
 
-const tagColumn = (_, { tags = [] }) => {
-  return (
-    <>
-      {tags.map((item) => (
-        <Tag key={item._id} color={item.color} bordered={false}>
-          {item.name}
-        </Tag>
-      ))}
-    </>
-  );
-};
+  const tagColumn = (_, { tags = [] }) => {
+    return (
+      <>
+        {tags.map((item) => (
+          <Tag key={item._id} color={item.color} bordered={false}>
+            {item.name}
+          </Tag>
+        ))}
+      </>
+    );
+  };
 
-const columns = [
-  {
-    title: "Title",
-    dataIndex: "title",
-    key: "title",
-  },
-  {
-    title: "Description",
-    dataIndex: "description",
-    key: "description",
-  },
-  {
-    title: "Tags",
-    dataIndex: "tags",
-    key: "tags",
-    render: tagColumn,
-  },
-  {
-    title: "Actions",
-    dataIndex: "action",
-    key: "action",
-    render: tableActions,
-  },
-];
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Tags",
+      dataIndex: "tags",
+      key: "tags",
+      render: tagColumn,
+    },
+    {
+      title: "Actions",
+      dataIndex: "action",
+      key: "action",
+      render: tableActions,
+    },
+  ];
 
-export const TodoListTable = ({ dataSource, ...props }) => {
   return (
     <Table
       pagination={{ pageSize: 5 }}

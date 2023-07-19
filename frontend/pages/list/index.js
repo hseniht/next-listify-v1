@@ -101,7 +101,10 @@ export default function ListPage({
 
       if (response.ok) {
         const todo = await response.json();
-        setTodo(todo);
+        const { _id, description, tags = [], title } = todo;
+        //filter tags for '_id' field only (for UI component)
+        const tagsId = tags.map((tag) => tag._id);
+        setTodo({ _id, description, tags: tagsId, title });
         // const editTodo = response
         // setTodos(updatedTodos);
       } else {
@@ -149,6 +152,10 @@ export default function ListPage({
     setTodo({ ...todo, [field]: e.target.value });
   };
 
+  const handleEditTags = (arr) => {
+    setTodo({ ...todo, tags: arr });
+  };
+
   return (
     <div className={styles.todo}>
       <h1 className={styles.todo__heading}>Todo List</h1>
@@ -175,6 +182,8 @@ export default function ListPage({
       <Section className={styles.todo_table}>
         <TodoListTable
           dataSource={todos}
+          onEdit={handleEdit}
+          onDelete={deleteTodo}
           rowKey={"_id"} //unique field from out dataset
         />
       </Section>
@@ -196,6 +205,11 @@ export default function ListPage({
                 onChange={(e) => handleInputChange(e, "description")}
                 placeholder="Enter a new todo description..."
               ></textarea>
+              <TodoTags
+                items={tags}
+                selectedItems={todo.tags}
+                onSelectItem={handleEditTags}
+              />
               <button onClick={handleSave}>Save edits</button>
             </Section>
           )}
