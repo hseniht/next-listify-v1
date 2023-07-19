@@ -3,10 +3,9 @@ import { TODOS_API_URL, TAGS_API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
 import { Section } from "../../components/ui/layout";
-import { Button, Table, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { TodoList } from "../../components/views/list";
 import { TodoTags } from "../../components/views/list";
+import { TodoListTable } from "../../components/views/list";
 export default function ListPage({
   initialTodos = [], //default value
   initialTags = [],
@@ -41,7 +40,7 @@ export default function ListPage({
       const todo = {
         title: newTodo,
         description: newTodoDescription,
-        tags: newTags
+        tags: newTags,
       };
 
       try {
@@ -150,46 +149,6 @@ export default function ListPage({
     setTodo({ ...todo, [field]: e.target.value });
   };
 
-  const tableActions = (param1, record) => {
-    return (
-      <div>
-        <Tooltip title="edit">
-          <Button
-            value={record._id}
-            onClick={(e) => handleEdit(record._id)}
-            icon={<EditOutlined />}
-          />
-        </Tooltip>
-        <Tooltip title="delete">
-          <Button
-            danger
-            onClick={() => deleteTodo(record._id)}
-            icon={<DeleteOutlined />}
-          />
-        </Tooltip>
-      </div>
-    );
-  };
-
-  const columns = [
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Actions",
-      dataIndex: "action",
-      key: "action",
-      render: tableActions,
-    },
-  ];
-
   return (
     <div className={styles.todo}>
       <h1 className={styles.todo__heading}>Todo List</h1>
@@ -214,9 +173,7 @@ export default function ListPage({
         <button onClick={addTodo}>Add Todo</button>
       </Section>
       <Section className={styles.todo_table}>
-        <Table
-          pagination={{ pageSize: 5 }}
-          columns={columns}
+        <TodoListTable
           dataSource={todos}
           rowKey={"_id"} //unique field from out dataset
         />

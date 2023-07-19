@@ -1,8 +1,9 @@
 //Todo: Add modular list component here
 import { useState } from "react";
 import styles from "../../styles/pages/list.module.css";
-import { Select, Space } from "antd";
+import { Button, Select, Space, Table, Tooltip } from "antd";
 // import type { CustomTagProps } from "rc-select/lib/BaseSelect";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 //ul lists
@@ -62,5 +63,58 @@ export const TodoTags = ({ items, selectedItems, onSelectItem }) => {
         </Option>
       ))}
     </Select>
+  );
+};
+
+//Todo-list Table
+const tableActions = (param1, record) => {
+  return (
+    <div>
+      <Tooltip title="edit">
+        <Button
+          value={record._id}
+          onClick={(e) => handleEdit(record._id)}
+          icon={<EditOutlined />}
+        />
+      </Tooltip>
+      <Tooltip title="delete">
+        <Button
+          danger
+          onClick={() => deleteTodo(record._id)}
+          icon={<DeleteOutlined />}
+        />
+      </Tooltip>
+    </div>
+  );
+};
+
+const columns = [
+  {
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
+  },
+  {
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
+  },
+  {
+    title: "Actions",
+    dataIndex: "action",
+    key: "action",
+    render: tableActions,
+  },
+];
+
+export const TodoListTable = ({ dataSource, ...props }) => {
+  return (
+    <Table
+      pagination={{ pageSize: 5 }}
+      columns={columns}
+      dataSource={dataSource}
+      // rowKey={rowKey} //unique field from out dataset
+      {...props}
+    />
   );
 };
