@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PageWrapper } from "../../components/ui/layout";
+import { FloatButton, Typography } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { TODOS_API_URL, TAGS_API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
@@ -8,10 +10,14 @@ import { Section } from "../../components/ui/layout";
 import { TodoList } from "../../components/views/list";
 import { TodoTags } from "../../components/views/list";
 import { TodoListTable } from "../../components/views/list";
+
+const { Title } = Typography;
+
 export default function ListPage({
   initialTodos = [], //default value
   initialTags = [],
 }) {
+  const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [todos, setTodos] = useState(initialTodos);
   const [tags, setTags] = useState(initialTags);
@@ -37,6 +43,12 @@ export default function ListPage({
     }
   };
 
+  const resetCreateForm = () => {
+    setNewTodo("");
+    setNewTodoDescription("");
+    setNewTags([]);
+  };
+
   const addTodo = async () => {
     if (newTodo.trim() !== "") {
       const todo = {
@@ -57,8 +69,8 @@ export default function ListPage({
         if (response.ok) {
           const savedTodo = await response.json();
           setTodos([...todos, savedTodo]);
-          setNewTodo("");
-          setNewTodoDescription("");
+          resetCreateForm();
+          setShowCreate(false);
           await handleFetch();
         } else {
           console.error("Failed to save todo");
@@ -160,26 +172,33 @@ export default function ListPage({
     <PageWrapper id={"notesPage"} className={styles.todo}>
       <Link href={"/"}>{"< Back to home"}</Link>
       <h1 className={styles.todo__heading}>Todo List</h1>
-      <Section className={styles.todo__input}>
-        <input
-          type="text"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="Enter a new todo title..."
-        />
-        <textarea
-          value={newTodoDescription}
-          onChange={(e) => setNewTodoDescription(e.target.value)}
-          placeholder="Enter a new todo description..."
-        ></textarea>
-        {/* //tags */}
-        <TodoTags
-          items={tags}
-          selectedItems={newTags}
-          onSelectItem={setNewTags}
-        />
-        <button onClick={addTodo}>Add Todo</button>
-      </Section>
+      {/* create */}
+      {showCreate && (
+        <ModalBox onClose={() => setShowCreate(false)}>
+          <div>Create New</div>
+          <Section className={styles.todo__input}>
+            <input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Enter a new todo title..."
+            />
+            <textarea
+              value={newTodoDescription}
+              onChange={(e) => setNewTodoDescription(e.target.value)}
+              placeholder="Enter a new todo description..."
+            ></textarea>
+            {/* //tags */}
+            <TodoTags
+              items={tags}
+              selectedItems={newTags}
+              onSelectItem={setNewTags}
+            />
+            <button onClick={addTodo}>Add Todo</button>
+          </Section>
+        </ModalBox>
+      )}
+      {/* -------tables ---------*/}
       <Section className={styles.todo_table}>
         <TodoListTable
           dataSource={todos}
@@ -188,6 +207,7 @@ export default function ListPage({
           rowKey={"_id"} //unique field from out dataset
         />
       </Section>
+      {/* edit */}
       {showEdit && (
         <ModalBox onClose={() => setShowEdit(false)}>
           <div>Edit</div>
@@ -219,6 +239,14 @@ export default function ListPage({
       {/* <Section className={styles.todo__output}>
         <TodoList todos={todos} onEdit={handleEdit} onDelete={deleteTodo} />
       </Section> */}
+      {!showCreate && !showEdit && (
+        <FloatButton
+          icon={<PlusOutlined />}
+          type="primary"
+          tooltip="Create Note"
+          onClick={() => setShowCreate(true)}
+        />
+      )}
     </PageWrapper>
   );
 }

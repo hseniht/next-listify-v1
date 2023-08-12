@@ -1,8 +1,10 @@
 import { createPortal } from "react-dom";
 // import { useState, useEffect } from "react";
 import css from "../../styles/ui/ui.module.css";
+import { Button } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
-export const ModalBox = ({ onClose, children }) => {
+export const ModalBox = ({ title, onClose, children }) => {
   // custom div wrapper
   //   const [modalContainer] = useState(document.createElement("div"));
   //   useEffect(() => {
@@ -15,9 +17,16 @@ export const ModalBox = ({ onClose, children }) => {
   return createPortal(
     <div className={css["modal__overlay"]}>
       <div className={css["modal__box"]}>
-        <button className={css["modal__box--close-btn"]} onClick={onClose}>
-          x
-        </button>
+        <div className={css["modal__box--header"]}>
+          {title}
+          <Button
+            className={css["modal__box--close-btn"]}
+            onClick={onClose}
+            shape="circle"
+            type="text"
+            icon={<CloseOutlined />}
+          />
+        </div>
         <div className={css["modal__box--content"]}>{children}</div>
       </div>
     </div>,

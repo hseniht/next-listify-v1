@@ -15,6 +15,12 @@
 .modal__box--close-btn {
   float: right;
 }
+
+.modal__box--header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .modal__box--content {
   /* background-color: green; */
 }
