@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Link from "next/link";
+import { PageWrapper } from "../../components/ui/layout";
 import { TODOS_API_URL, TAGS_API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
@@ -155,7 +157,8 @@ export default function ListPage({
   };
 
   return (
-    <div className={styles.todo}>
+    <PageWrapper id={"notesPage"} className={styles.todo}>
+      <Link href={"/"}>{"< Back to home"}</Link>
       <h1 className={styles.todo__heading}>Todo List</h1>
       <Section className={styles.todo__input}>
         <input
@@ -216,7 +219,7 @@ export default function ListPage({
       {/* <Section className={styles.todo__output}>
         <TodoList todos={todos} onEdit={handleEdit} onDelete={deleteTodo} />
       </Section> */}
-    </div>
+    </PageWrapper>
   );
 }
 

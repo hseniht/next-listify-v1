@@ -5,3 +5,11 @@ export const Section = ({ id, className, children }) => {
     </section>
   );
 };
+
+export const PageWrapper = ({ id, className, children }) => {
+  return (
+    <div id={id} className={className}>
+      {children}
+    </div>
+  );
+};

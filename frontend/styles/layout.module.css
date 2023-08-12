@@ -1,0 +1,16 @@
+.page__wrapper {
+  padding: 5%;
+}
+.page__wrapper--hero {
+  padding: 5% 20%;
+}
+.w-100 {
+  width: 100%;
+}
+.h-100 {
+  height: 100%;
+}
+.wh-100 {
+  width: 100%;
+  height: 100%;
+}
