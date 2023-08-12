@@ -60,29 +60,45 @@ app.get("/notepad/todos", async (req, res) => {
       // .skip(page * listPerPage)
       // .limit(listPerPage)
       .toArray();
-    res.json(todos);
+    const tagsC = await tagsCollection.find().toArray();
+
+    // Convert ObjectIds to strings in tagsC (collection)
+    const tagsCWithStrings = tagsC.map((tag) => ({
+      ...tag,
+      _id: tag._id.toString(),
+    }));
+
+    // Map each todo and add the corresponding tagsC objects to the "tagsDetail" property
+    const todosWithTagsC = todos.map((todo) => ({
+      ...todo,
+      tagsDetail: todo.tags
+        ? tagsCWithStrings.filter((tag) => todo.tags.includes(tag._id))
+        : [],
+    }));
+
+    res.json(todosWithTagsC);
   } catch (error) {
     console.error("Failed to fetch todos", error);
-    res.status(500).json({ error: "Failed to fetch todos" });
+    res.status(500).json({ error: "Failed to fetch todos or tags" });
   }
 });
 
 app.post("/notepad/todos", async (req, res) => {
   const todo = req.body;
   try {
-    const tags = await tagsCollection.find().toArray();
+    // const tags = await tagsCollection.find().toArray();
 
     //array of selected tags id
-    const selectedTagsId = todo.tags;
+    // const selectedTagsId = todo.tags;
 
     //map all tags that has matching ids
-    const filteredTags = tags.filter((tag) =>
-      selectedTagsId.includes(tag._id.toString())
-    );
+    // const filteredTags = tags.filter((tag) =>
+    //   selectedTagsId.includes(tag._id.toString())
+    // );
     const newTodo = {
       title: todo.title,
       description: todo.description,
-      tags: filteredTags,
+      tags: todo.tags,
     };
     const result = await todoCollection.insertOne(newTodo);
     const savedTodo = { ...todo, _id: result.insertedId };
@@ -133,15 +149,15 @@ app.patch("/notepad/todos/:id", async (req, res) => {
   const { title, description, tags } = req.body; // Extract the "tags" field from the request body
 
   try {
-    const tagsC = await tagsCollection.find().toArray();
-    const filteredTags = tagsC.filter((tag) =>
-      tags.includes(tag._id.toString())
-    );
+    // const tagsC = await tagsCollection.find().toArray();
+    // const filteredTags = tagsC.filter((tag) =>
+    //   tags.includes(tag._id.toString())
+    // );
 
     const updates = {
       title: title,
       description: description,
-      tags: filteredTags || [], // Set default value to an empty array if tags is undefined or null
+      tags: tags || [], // Set default value to an empty array if tags is undefined or null
     };
 
     const result = await todoCollection.updateOne(

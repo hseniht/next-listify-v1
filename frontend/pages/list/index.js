@@ -57,6 +57,7 @@ export default function ListPage({
           setTodos([...todos, savedTodo]);
           setNewTodo("");
           setNewTodoDescription("");
+          await handleFetch();
         } else {
           console.error("Failed to save todo");
         }
@@ -104,7 +105,7 @@ export default function ListPage({
         const { _id, description, tags = [], title } = todo;
         //filter tags for '_id' field only (for UI component)
         const tagsId = tags.map((tag) => tag._id);
-        setTodo({ _id, description, tags: tagsId, title });
+        setTodo({ _id, description, tags, title });
         // const editTodo = response
         // setTodos(updatedTodos);
       } else {
@@ -118,8 +119,6 @@ export default function ListPage({
   const handleSave = async () => {
     // const updatedTodo = todo;
     const { _id, title, description, tags } = todo;
-    console.log("tk description", description);
-    console.log("tk tags", tags);
 
     const updatedTodo = {
       title: title,
@@ -127,7 +126,6 @@ export default function ListPage({
       tags: tags || [], // Set default value to an empty array if tags is undefined or null
     };
 
-    console.log("tk updated toDo", updatedTodo);
     try {
       const response = await fetch(`${TODOS_API_URL}/${_id}`, {
         method: "PATCH",

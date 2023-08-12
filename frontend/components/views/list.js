@@ -89,10 +89,10 @@ export const TodoListTable = ({ dataSource, onEdit, onDelete, ...props }) => {
     );
   };
 
-  const tagColumn = (_, { tags = [] }) => {
+  const tagColumn = (_, { tagsDetail = [] }) => {
     return (
       <>
-        {tags.map((item) => (
+        {tagsDetail.map((item) => (
           <Tag key={item._id} color={item.color} bordered={false}>
             {item.name}
           </Tag>
