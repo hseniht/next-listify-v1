@@ -2,10 +2,10 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const createListRoutes = require("./routes/lists");
 const app = express();
-const port = 3001; // or any other port number you prefer
 require("dotenv").config(); //for .env variables
+const port = process.env.PORT; // or any other port number you prefer
 
-// Enable JSON parsing for incoming requests (middleware)
+// Enable JSON parsing for incoming requests body (middleware)
 app.use(express.json());
 
 // Enable CORS

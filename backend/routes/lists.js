@@ -113,6 +113,7 @@ function createListRoutes(todoCollection, tagsCollection) {
       //   tags.includes(tag._id.toString())
       // );
 
+      //todo-check if can use spread instead. Eg: ...req.body
       const updates = {
         title: title,
         description: description,
