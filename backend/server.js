@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { MongoClient, ObjectId } = require("mongodb");
 const { Tag_model, Todo_model } = require("./models/listModels");
-const createListRoutes = require("./routes/lists");
+const listAPIRoutes = require("./routes/lists");
 const app = express();
 require("dotenv").config(); //for .env variables
 const port = process.env.PORT; // or any other port number you prefer
@@ -26,11 +26,12 @@ app.use((req, res, next) => {
 
 // const url = "mongodb://localhost:27017";
 const url = process.env.MONGODB_CONNECTION_STRING;
-const dbName = "notepad";
 
-let dbClient;
-let todoCollection;
-let tagsCollection;
+// With mongoose, this variables are longer used
+// const dbName = "notepad";
+// let dbClient;
+// let todoCollection;
+// let tagsCollection;
 
 // Establish database connection
 async function connectToDatabase() {
@@ -67,7 +68,6 @@ async function connectToDatabase() {
 
 // Connect to the database when the server starts
 connectToDatabase().then(() => {
-  const listAPIRoutes = createListRoutes(todoCollection, tagsCollection);
   //baseUrl 'notepad'
   app.use("/notepad", listAPIRoutes);
 

@@ -1,7 +1,6 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
 const router = express.Router();
-const { Tag_model, Todo_model } = require("../models/listModels");
 const {
   getTodos,
   getTodo,
@@ -10,26 +9,23 @@ const {
   deleteTodo,
   updateTodo,
 } = require("../controllers/listController");
-// function takes collection and returns route
-// API routes and logic handled inside
-function createListRoutes(todoCollection, tagsCollection) {
-  router.get("/todos", getTodos);
 
-  // GET a single note
-  router.get("/todos/:id", getTodo);
+// GET All note
+router.get("/todos", getTodos);
 
-  // POST a new note
-  router.post("/todos", createTodo);
+// GET a single note
+router.get("/todos/:id", getTodo);
 
-  // DELETE a note
-  router.delete("/todos/:id", deleteTodo);
+// POST a new note
+router.post("/todos", createTodo);
 
-  // UPDATE a note
-  router.patch("/todos/:id", updateTodo);
+// DELETE a note
+router.delete("/todos/:id", deleteTodo);
 
-  // GET all tags
-  router.get("/tags", getTags);
+// UPDATE a note
+router.patch("/todos/:id", updateTodo);
 
-  return router;
-}
-module.exports = createListRoutes;
+// GET all tags
+router.get("/tags", getTags);
+
+module.exports = router;
