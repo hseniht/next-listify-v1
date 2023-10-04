@@ -1,5 +1,7 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const { MongoClient, ObjectId } = require("mongodb");
+const { Tag_model, Todo_model } = require("./models/listModels");
 const createListRoutes = require("./routes/lists");
 const app = express();
 require("dotenv").config(); //for .env variables
@@ -33,11 +35,31 @@ let tagsCollection;
 // Establish database connection
 async function connectToDatabase() {
   try {
-    dbClient = await MongoClient.connect(url);
-    const db = dbClient.db(dbName);
-    todoCollection = db.collection("todos");
-    tagsCollection = db.collection("tags");
-    console.log("Connected to the database");
+    // OLD: MongoDB way
+    // dbClient = await MongoClient.connect(url);
+    // const db = dbClient.db(dbName);
+    // todoCollection = db.collection("todos");
+    // tagsCollection = db.collection("tags");
+    // console.log("Connected to the database");
+    mongoose.connect(url);
+
+    await Todo_model.find({})
+      .then((todos) => {
+        todoCollection = todos;
+      })
+      .catch((err) => {
+        console.error("Error retrieving todos:", err);
+      });
+
+    await Tag_model.find({})
+      .then((tags) => {
+        tagsCollection = tags;
+        // console.log("Todos:", todos);
+      })
+      .catch((err) => {
+        console.error("Error retrieving tags:", err);
+      });
+    console.log("connected mongoose");
   } catch (error) {
     console.error("Failed to connect to the database", error);
   }
