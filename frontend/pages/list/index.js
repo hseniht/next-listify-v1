@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PageWrapper } from "../../components/ui/layout";
 import { FloatButton, Typography } from "antd";
@@ -10,6 +10,7 @@ import { Section } from "../../components/ui/layout";
 import { TodoList } from "../../components/views/list";
 import { TodoTags } from "../../components/views/list";
 import { TodoListTable } from "../../components/views/list";
+import { useTodosContext } from "../../hooks/useTodoListContext";
 
 const { Title } = Typography;
 
@@ -17,9 +18,14 @@ export default function ListPage({
   initialTodos = [], //default value
   initialTags = [],
 }) {
+  const { todos, dispatch } = useTodosContext();
+
+  useEffect(() => {
+    dispatch({ type: "SET_TODOS", payload: initialTodos });
+  }, [initialTodos]);
+
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [todos, setTodos] = useState(initialTodos);
   const [tags, setTags] = useState(initialTags);
   const [newTodo, setNewTodo] = useState("");
   const [todo, setTodo] = useState("");
@@ -68,10 +74,9 @@ export default function ListPage({
 
         if (response.ok) {
           const savedTodo = await response.json();
-          setTodos([...todos, savedTodo]);
+          dispatch({ type: "CREATE_TODO", payload: savedTodo });
           resetCreateForm();
           setShowCreate(false);
-          await handleFetch();
         } else {
           console.error("Failed to save todo");
         }
@@ -96,7 +101,8 @@ export default function ListPage({
           //TODO if:
           // Network performance is a concern? -> Filter out deleted record from local state.
           // Data consistency is crucial? -> Update state from backend.
-          await handleFetch();
+          // await handleFetch();
+          dispatch({ type: "DELETE_TODO", payload: id });
         } else {
           console.error("Failed to delete todo");
         }
@@ -134,7 +140,7 @@ export default function ListPage({
     // const updatedTodo = todo;
     const { _id, title, description, tags } = todo;
 
-    const updatedTodo = {
+    let updatedTodo = {
       title: title,
       description: description,
       tags: tags || [], // Set default value to an empty array if tags is undefined or null
@@ -151,7 +157,8 @@ export default function ListPage({
 
       if (response.ok) {
         setShowEdit(false);
-        await handleFetch();
+        updatedTodo = await response.json(); //this has with more fields
+        dispatch({ type: "UPDATE_TODO", payload: updatedTodo });
       } else {
         console.error("Failed to save todo");
       }

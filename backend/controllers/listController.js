@@ -98,13 +98,19 @@ const updateTodo = async (req, res) => {
   // todo: check `findByIdAndUpdate()` and compare
   const result = await Todo_model.findOneAndUpdate(
     { _id: id },
-    { ...req.body }
+    { ...req.body },
+    { new: true } // This option returns the updated document otherwise it'll return back the old one
   );
   if (!result) {
     console.error("Failed to update todo", error);
     return res.status(404).json({ error: "Todo not found" });
   }
-  return res.sendStatus(204); // or can use 200 to return back content
+  const tags = req.body.tags;
+  const tagsC = await Tag_model.find({});
+  const filteredTags = tagsC.filter((tag) => tags.includes(tag._id.toString()));
+  let updatedTodo = { ...result.toObject(), tagsDetail: filteredTags }; // result with the corresponding tags detail
+
+  return res.status(200).json(updatedTodo); // or can use 200 to return back content
 };
 
 // get all Tags
