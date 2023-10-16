@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { MongoClient, ObjectId } = require("mongodb");
 const { Tag_model, Todo_model } = require("./models/listModels");
 const listAPIRoutes = require("./routes/lists");
+const userAPIRoutes = require("./routes/user");
 const app = express();
 require("dotenv").config(); //for .env variables
 const port = process.env.PORT; // or any other port number you prefer
@@ -69,7 +70,8 @@ async function connectToDatabase() {
 // Connect to the database when the server starts
 connectToDatabase().then(() => {
   //baseUrl 'notepad'
-  app.use("/notepad", listAPIRoutes);
+  app.use("/api/notepad", listAPIRoutes);
+  app.use("/api/notepad", userAPIRoutes);
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
