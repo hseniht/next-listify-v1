@@ -1,12 +1,15 @@
 import "../styles/globals.css";
 import "../styles/layout.css";
 import { TodoListProvider } from "../context/TodoListContext";
+import { AuthContextProvider } from "../context/AuthContext";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <TodoListProvider>
-      <Component {...pageProps} />
-    </TodoListProvider>
+    <AuthContextProvider>
+      <TodoListProvider>
+        <Component {...pageProps} />
+      </TodoListProvider>
+    </AuthContextProvider>
   );
 }
 
