@@ -1,6 +1,13 @@
 import Link from "next/link";
+import { useLogout } from "../../hooks/useLogout";
 
 const Navbar = () => {
+  const { logout } = useLogout();
+
+  const handleClick = () => {
+    logout();
+  };
+
   return (
     <header id="mainHeader">
       <div id="mainNavigation" className="container">
@@ -12,6 +19,9 @@ const Navbar = () => {
             </li>
             <li className="menu-item">
               <Link href={"/list"}>List</Link>
+            </li>
+            <li className="menu-item">
+              <button onClick={handleClick}>Log out</button>
             </li>
             <li className="menu-item">
               <Link href={"/login"}>Login</Link>

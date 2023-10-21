@@ -30,7 +30,7 @@ export const useSignup = () => {
       // note: strigify it, because localStorage needs json object/strings
       localStorage.setItem("user", JSON.stringify(json));
 
-      // update out state
+      // update our state
       dispatch({ type: "LOGIN", payload: json });
       setIsLoading(false);
     }
