@@ -32,6 +32,8 @@ export default function ListPage({
   const [newTodoDescription, setNewTodoDescription] = useState("");
   const [newTags, setNewTags] = useState([]);
 
+  // todo: refactor with hooks implementation
+
   const handleFetch = async () => {
     try {
       const response = await fetch(`${TODOS_API_URL}`, {
