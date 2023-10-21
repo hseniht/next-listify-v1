@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { useLogout } from "../../hooks/useLogout";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const Navbar = () => {
   const { logout } = useLogout();
+  const { user } = useAuthContext();
 
   const handleClick = () => {
     logout();
@@ -20,15 +22,22 @@ const Navbar = () => {
             <li className="menu-item">
               <Link href={"/list"}>List</Link>
             </li>
-            <li className="menu-item">
-              <button onClick={handleClick}>Log out</button>
-            </li>
-            <li className="menu-item">
-              <Link href={"/login"}>Login</Link>
-            </li>
-            <li className="menu-item">
-              <Link href={"/signup"}>Sign Up</Link>
-            </li>
+            {user && (
+              <li className="menu-item">
+                <span>{user.email}</span>
+                <button onClick={handleClick}>Log out</button>
+              </li>
+            )}
+            {!user && (
+              <>
+                <li className="menu-item">
+                  <Link href={"/login"}>Login</Link>
+                </li>
+                <li className="menu-item">
+                  <Link href={"/signup"}>Sign Up</Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>
