@@ -179,7 +179,7 @@ export default function ListPage({
 
   return (
     <PageWrapper id={"notesPage"} className={styles.todo}>
-      <Link href={"/"}>{"< Back to home"}</Link>
+      {/* <Link href={"/"}>{"< Back to home"}</Link> */}
       <h1 className={styles.todo__heading}>Todo List</h1>
       {/* create */}
       {showCreate && (
