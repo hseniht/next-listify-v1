@@ -70,8 +70,9 @@ async function connectToDatabase() {
 // Connect to the database when the server starts
 connectToDatabase().then(() => {
   //baseUrl 'notepad'
-  app.use("/api/notepad", listAPIRoutes);
+  //NOTE: 'userAPIRoutes' must run first in order to get 'token' before any other API request
   app.use("/api/notepad", userAPIRoutes);
+  app.use("/api/notepad", listAPIRoutes);
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
