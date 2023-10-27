@@ -11,6 +11,17 @@ const {
 } = require("../controllers/listController");
 const requireAuth = require("../middleware/requireAuth");
 
+// -----------------------------
+//   Routes without TOKENS:
+// -----------------------------
+
+// GET all tags
+router.get("/tags", getTags);
+
+// -----------------------------
+//   Routes with TOKENS:
+// -----------------------------
+
 // 'use' method is used to apply middleware functions to routes.
 // 'Middlewares' can perform tasks or checks before or after handling a request.
 
@@ -32,8 +43,5 @@ router.delete("/todos/:id", deleteTodo);
 
 // UPDATE a note
 router.patch("/todos/:id", updateTodo);
-
-// GET all tags
-router.get("/tags", getTags);
 
 module.exports = router;
