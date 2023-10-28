@@ -16,6 +16,10 @@ const todoSchema = new Schema(
       type: Array,
       required: false,
     },
+    user_id: {
+      type: String,
+      required: true,
+    },
     // ... other fields as needed
   },
   { timestamps: true }
