@@ -2,8 +2,9 @@ const { Tag_model, Todo_model } = require("../models/listModels");
 const mongoose = require("mongoose");
 // GET all Todos
 const getTodos = async (req, res) => {
+  const user_id = req.user._id; // we get this 'user' from our auth middleware
   try {
-    const todos = await Todo_model.find({});
+    const todos = await Todo_model.find({ user_id }); //todo: sort by create date
     const tagsC = await Tag_model.find({});
 
     // NOTE: 'toObject()' or 'lean()' to filter mongoose model
@@ -58,9 +59,16 @@ const getTodo = async (req, res) => {
 
 // POST a new Todo
 const createTodo = async (req, res) => {
+  const user_id = req.user._id; // from our auth middleware
+
   const { title, description, tags } = req.body;
   try {
-    const newTodo = await Todo_model.create({ title, description, tags });
+    const newTodo = await Todo_model.create({
+      title,
+      description,
+      tags,
+      user_id,
+    });
     res.status(201).json(newTodo);
   } catch (error) {
     console.error("Failed to save todo", error);

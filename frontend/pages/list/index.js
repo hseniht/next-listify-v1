@@ -11,26 +11,58 @@ import { TodoList } from "../../components/views/list";
 import { TodoTags } from "../../components/views/list";
 import { TodoListTable } from "../../components/views/list";
 import { useTodosContext } from "../../hooks/useTodoListContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useRouter } from "next/router";
 
 const { Title } = Typography;
 
-export default function ListPage({
-  initialTodos = [], //default value
-  initialTags = [],
-}) {
+export default function ListPage() {
   const { todos, dispatch } = useTodosContext();
+  const { user } = useAuthContext();
+  const router = useRouter();
 
   useEffect(() => {
-    dispatch({ type: "SET_TODOS", payload: initialTodos });
-  }, [initialTodos]);
+    const initialFetch = async () => {
+      let initialTodos = [];
+      let initialTags = [];
+
+      try {
+        const todosResponse = await fetch(TODOS_API_URL, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const tagsResponse = await fetch(TAGS_API_URL);
+
+        if (todosResponse.ok) {
+          initialTodos = await todosResponse.json();
+          dispatch({ type: "SET_TODOS", payload: initialTodos });
+        }
+        if (tagsResponse.ok) {
+          initialTags = await tagsResponse.json();
+          setTags(initialTags);
+        }
+      } catch (error) {
+        console.error("Failed to fetch todos:", error);
+      }
+    };
+
+    if (user) {
+      initialFetch();
+    } else {
+      router.push("/login");
+    }
+  }, [user]);
 
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [tags, setTags] = useState(initialTags);
+  const [tags, setTags] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [todo, setTodo] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
   const [newTags, setNewTags] = useState([]);
+
+  // todo: refactor with hooks implementation
 
   const handleFetch = async () => {
     try {
@@ -56,6 +88,11 @@ export default function ListPage({
   };
 
   const addTodo = async () => {
+    if (!user) {
+      // todo: add as 'error message' state on form
+      alert("You must be logged in");
+      return;
+    }
     if (newTodo.trim() !== "") {
       const todo = {
         title: newTodo,
@@ -68,6 +105,7 @@ export default function ListPage({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
           },
           body: JSON.stringify(todo),
         });
@@ -87,6 +125,10 @@ export default function ListPage({
   };
 
   const deleteTodo = async (id) => {
+    if (!user) {
+      alert("You must be logged in");
+      return;
+    }
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this item?"
     );
@@ -94,6 +136,9 @@ export default function ListPage({
       try {
         const response = await fetch(`${TODOS_API_URL}/${id}`, {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         });
 
         if (response.ok) {
@@ -113,11 +158,18 @@ export default function ListPage({
   };
 
   const handleEdit = async (id) => {
+    if (!user) {
+      alert("You must be logged in");
+      return;
+    }
     setTodo(""); //reset
     setShowEdit(true);
     try {
       const response = await fetch(`${TODOS_API_URL}/${id}`, {
         method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       });
 
       if (response.ok) {
@@ -137,6 +189,10 @@ export default function ListPage({
   };
 
   const handleSave = async () => {
+    if (!user) {
+      alert("You must be logged in");
+      return;
+    }
     // const updatedTodo = todo;
     const { _id, title, description, tags } = todo;
 
@@ -151,6 +207,7 @@ export default function ListPage({
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify(updatedTodo),
       });
@@ -177,7 +234,7 @@ export default function ListPage({
 
   return (
     <PageWrapper id={"notesPage"} className={styles.todo}>
-      <Link href={"/"}>{"< Back to home"}</Link>
+      {/* <Link href={"/"}>{"< Back to home"}</Link> */}
       <h1 className={styles.todo__heading}>Todo List</h1>
       {/* create */}
       {showCreate && (
@@ -219,7 +276,7 @@ export default function ListPage({
         <ModalBox onClose={() => setShowEdit(false)}>
           <div>Edit</div>
           {!todo ? (
-            <div>Loading ...</div>
+            <div>Loading ...</div> //Todo: Hide this if failed
           ) : (
             <Section className={styles.todo__input}>
               <input
@@ -258,37 +315,37 @@ export default function ListPage({
   );
 }
 
-export async function getServerSideProps() {
-  // Simulating fetching todos from an API endpoint
-  // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-  let initialTodos = [];
-  let initialTags = [];
+// export async function getServerSideProps() {
+//   // Simulating fetching todos from an API endpoint
+//   // const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+//   let initialTodos = [];
+//   let initialTags = [];
 
-  try {
-    const todosResponse = await fetch(TODOS_API_URL);
-    const tagsResponse = await fetch(TAGS_API_URL);
+//   try {
+//     const todosResponse = await fetch(TODOS_API_URL);
+//     const tagsResponse = await fetch(TAGS_API_URL);
 
-    if (todosResponse.ok) {
-      initialTodos = await todosResponse.json();
-    }
-    if (tagsResponse.ok) {
-      initialTags = await tagsResponse.json();
-    }
-    return {
-      props: {
-        initialTodos,
-        initialTags,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    // Handle the error
-    return {
-      props: {
-        initialTodos,
-        initialTags,
-        error: "Failed to fetch todos",
-      },
-    };
-  }
-}
+//     if (todosResponse.ok) {
+//       initialTodos = await todosResponse.json();
+//     }
+//     if (tagsResponse.ok) {
+//       initialTags = await tagsResponse.json();
+//     }
+//     return {
+//       props: {
+//         initialTodos,
+//         initialTags,
+//       },
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     // Handle the error
+//     return {
+//       props: {
+//         initialTodos,
+//         initialTags,
+//         error: "Failed to fetch todos",
+//       },
+//     };
+//   }
+// }
