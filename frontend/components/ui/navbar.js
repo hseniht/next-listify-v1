@@ -1,48 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLogout } from "../../hooks/useLogout";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { Menu, Button } from "antd";
+import { useRouter } from "next/router";
 
 const Navbar = () => {
+  const router = useRouter();
   const { logout } = useLogout();
   const { user } = useAuthContext();
-  const [current, setCurrent] = useState("home");
+  // const currentPath = router.pathname;
+  const [current, setCurrent] = useState(router.pathname);
+
+  useEffect(() => {
+    setCurrent(router.pathname);
+  }, [router.pathname]);
 
   const handleClick = () => {
     logout();
   };
   const onClick = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
+    console.log("menu clicked ", e);
+    // setCurrent(e.key);
   };
 
   const menuItems = [
     {
       label: <Link href={"/"}>Home</Link>,
-      key: "home",
+      key: "/",
     },
     {
       label: <Link href={"/list"}>Dashboard</Link>,
-      key: "list",
+      key: "/list",
     },
     {
       label: <Link href={"/login"}>Login</Link>,
-      key: "login",
+      key: "/login",
       className: "klass",
       hidden: true,
     },
     {
       label: <Link href={"/signup"}>SignUp</Link>,
-      key: "signup",
+      key: "/signup",
     },
   ];
   let displayMenu = menuItems;
   // if logged in, then remove 'signup' and 'login' from menu
   if (user) {
     displayMenu = menuItems.filter(
-      (item) => item.key !== "login" && item.key !== "signup"
+      (item) => item.key !== "/login" && item.key !== "/signup"
     );
+  } else {
+    displayMenu = menuItems.filter((item) => item.key !== "/list");
   }
 
   return (
@@ -51,7 +60,7 @@ const Navbar = () => {
         <div className="brand-container">Logo</div>
         <nav className={"main-menu__nav"}>
           <Menu
-            onClick={onClick}
+            // onClick={onClick}
             selectedKeys={[current]}
             mode="horizontal"
             items={displayMenu}

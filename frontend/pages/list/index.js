@@ -12,12 +12,14 @@ import { TodoTags } from "../../components/views/list";
 import { TodoListTable } from "../../components/views/list";
 import { useTodosContext } from "../../hooks/useTodoListContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useRouter } from "next/router";
 
 const { Title } = Typography;
 
 export default function ListPage() {
   const { todos, dispatch } = useTodosContext();
   const { user } = useAuthContext();
+  const router = useRouter();
 
   useEffect(() => {
     const initialFetch = async () => {
@@ -47,6 +49,8 @@ export default function ListPage() {
 
     if (user) {
       initialFetch();
+    } else {
+      router.push("/login");
     }
   }, [user]);
 

@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSignup } from "../hooks/useSignUp";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useRouter } from "next/router";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signup, error, isLoading } = useSignup();
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/list");
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
