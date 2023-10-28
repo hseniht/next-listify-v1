@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // GET all Todos
 const getTodos = async (req, res) => {
   try {
-    const todos = await Todo_model.find({});
+    const todos = await Todo_model.find({}); //todo: sort by create date
     const tagsC = await Tag_model.find({});
 
     // NOTE: 'toObject()' or 'lean()' to filter mongoose model
