@@ -62,6 +62,18 @@ const createTodo = async (req, res) => {
   const user_id = req.user._id; // from our auth middleware
 
   const { title, description, tags } = req.body;
+  let emptyFields = [];
+
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!description) {
+    emptyFields.push("description");
+  }
+  if (emptyFields.length > 0) {
+    return res.status(400).json({ error: "Please fill in all fields" });
+  }
+
   try {
     const newTodo = await Todo_model.create({
       title,

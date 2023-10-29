@@ -57,10 +57,11 @@ export default function ListPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [tags, setTags] = useState([]);
-  const [newTodo, setNewTodo] = useState("");
-  const [todo, setTodo] = useState("");
-  const [newTodoDescription, setNewTodoDescription] = useState("");
-  const [newTags, setNewTags] = useState([]);
+  const [todo, setTodo] = useState({
+    title: "",
+    description: "",
+    tags: [],
+  });
 
   // todo: refactor with hooks implementation
 
@@ -82,9 +83,11 @@ export default function ListPage() {
   };
 
   const resetCreateForm = () => {
-    setNewTodo("");
-    setNewTodoDescription("");
-    setNewTags([]);
+    setTodo({
+      title: "",
+      description: "",
+      tags: [],
+    });
   };
 
   const addTodo = async () => {
@@ -93,34 +96,27 @@ export default function ListPage() {
       alert("You must be logged in");
       return;
     }
-    if (newTodo.trim() !== "") {
-      const todo = {
-        title: newTodo,
-        description: newTodoDescription,
-        tags: newTags,
-      };
 
-      try {
-        const response = await fetch(TODOS_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify(todo),
-        });
+    try {
+      const response = await fetch(TODOS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(todo),
+      });
 
-        if (response.ok) {
-          const savedTodo = await response.json();
-          dispatch({ type: "CREATE_TODO", payload: savedTodo });
-          resetCreateForm();
-          setShowCreate(false);
-        } else {
-          console.error("Failed to save todo");
-        }
-      } catch (error) {
-        console.error("Failed to save todo", error);
+      const newTodo = await response.json();
+      if (response.ok) {
+        dispatch({ type: "CREATE_TODO", payload: newTodo });
+        resetCreateForm();
+        setShowCreate(false);
+      } else {
+        console.error("Failed to save todo", newTodo.error);
       }
+    } catch (error) {
+      console.error("Failed to save todo", error);
     }
   };
 
@@ -232,6 +228,11 @@ export default function ListPage() {
     setTodo({ ...todo, tags: arr });
   };
 
+  const handleOpenForm = () => {
+    resetCreateForm();
+    setShowCreate(true);
+  };
+
   return (
     <PageWrapper id={"notesPage"} className={styles.todo}>
       {/* <Link href={"/"}>{"< Back to home"}</Link> */}
@@ -243,20 +244,20 @@ export default function ListPage() {
           <Section className={styles.todo__input}>
             <input
               type="text"
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
+              value={todo.title}
+              onChange={(e) => handleInputChange(e, "title")}
               placeholder="Enter a new todo title..."
             />
             <textarea
-              value={newTodoDescription}
-              onChange={(e) => setNewTodoDescription(e.target.value)}
+              value={todo.description}
+              onChange={(e) => handleInputChange(e, "description")}
               placeholder="Enter a new todo description..."
             ></textarea>
             {/* //tags */}
             <TodoTags
               items={tags}
-              selectedItems={newTags}
-              onSelectItem={setNewTags}
+              selectedItems={todo.tags}
+              onSelectItem={handleEditTags}
             />
             <button onClick={addTodo}>Add Todo</button>
           </Section>
@@ -308,7 +309,7 @@ export default function ListPage() {
           icon={<PlusOutlined />}
           type="primary"
           tooltip="Create Note"
-          onClick={() => setShowCreate(true)}
+          onClick={handleOpenForm}
         />
       )}
     </PageWrapper>
