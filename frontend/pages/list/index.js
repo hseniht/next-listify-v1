@@ -7,9 +7,7 @@ import { TODOS_API_URL, TAGS_API_URL } from "../../constants/constants";
 import styles from "../../styles/pages/list.module.css";
 import { ModalBox } from "../../components/ui/ui";
 import { Section } from "../../components/ui/layout";
-import { TodoList } from "../../components/views/list";
-import { TodoTags } from "../../components/views/list";
-import { TodoListTable } from "../../components/views/list";
+import { TodoListTable, TodoForm } from "../../components/views/list";
 import { useTodosContext } from "../../hooks/useTodoListContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useRouter } from "next/router";
@@ -62,6 +60,11 @@ export default function ListPage() {
     description: "",
     tags: [],
   });
+
+  const inputErrors = {
+    title: "Title is required!",
+    description: "Description is required!",
+  };
 
   // todo: refactor with hooks implementation
 
@@ -158,7 +161,7 @@ export default function ListPage() {
       alert("You must be logged in");
       return;
     }
-    setTodo(""); //reset
+    setTodo({}); //reset
     setShowEdit(true);
     try {
       const response = await fetch(`${TODOS_API_URL}/${id}`, {
@@ -220,8 +223,9 @@ export default function ListPage() {
     }
   };
 
-  const handleInputChange = (e, field) => {
-    setTodo({ ...todo, [field]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTodo({ ...todo, [name]: value });
   };
 
   const handleEditTags = (arr) => {
@@ -241,26 +245,16 @@ export default function ListPage() {
       {showCreate && (
         <ModalBox onClose={() => setShowCreate(false)}>
           <div>Create New</div>
-          <Section className={styles.todo__input}>
-            <input
-              type="text"
-              value={todo.title}
-              onChange={(e) => handleInputChange(e, "title")}
-              placeholder="Enter a new todo title..."
-            />
-            <textarea
-              value={todo.description}
-              onChange={(e) => handleInputChange(e, "description")}
-              placeholder="Enter a new todo description..."
-            ></textarea>
-            {/* //tags */}
-            <TodoTags
-              items={tags}
-              selectedItems={todo.tags}
-              onSelectItem={handleEditTags}
-            />
-            <button onClick={addTodo}>Add Todo</button>
-          </Section>
+          <TodoForm
+            title={todo.title}
+            description={todo.description}
+            tags={tags}
+            inputErrors={inputErrors}
+            selectedTags={todo.tags}
+            onChangeInput={(e) => handleInputChange(e)}
+            onSelectTags={handleEditTags}
+            onSave={addTodo}
+          />
         </ModalBox>
       )}
       {/* -------tables ---------*/}
@@ -276,28 +270,20 @@ export default function ListPage() {
       {showEdit && (
         <ModalBox onClose={() => setShowEdit(false)}>
           <div>Edit</div>
-          {!todo ? (
+          {/* {!todo ? ( */}
+          {Object.keys(todo).length === 0 ? (
             <div>Loading ...</div> //Todo: Hide this if failed
           ) : (
-            <Section className={styles.todo__input}>
-              <input
-                type="text"
-                value={todo.title}
-                onChange={(e) => handleInputChange(e, "title")}
-                placeholder="Enter a new todo title..."
-              />
-              <textarea
-                value={todo.description}
-                onChange={(e) => handleInputChange(e, "description")}
-                placeholder="Enter a new todo description..."
-              ></textarea>
-              <TodoTags
-                items={tags}
-                selectedItems={todo.tags}
-                onSelectItem={handleEditTags}
-              />
-              <button onClick={handleSave}>Save edits</button>
-            </Section>
+            <TodoForm
+              title={todo.title}
+              description={todo.description}
+              tags={tags}
+              inputErrors={inputErrors}
+              selectedTags={todo.tags}
+              onChangeInput={(e) => handleInputChange(e)}
+              onSelectTags={handleEditTags}
+              onSave={handleSave}
+            />
           )}
         </ModalBox>
       )}

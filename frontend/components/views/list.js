@@ -4,7 +4,7 @@ import styles from "../../styles/pages/list.module.css";
 import { Button, Select, Space, Table, Tag, Tooltip } from "antd";
 // import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-
+import { Section } from "../ui/layout";
 const { Option } = Select;
 //ul lists
 export const TodoList = ({ todos, onEdit, onDelete }) => {
@@ -134,5 +134,64 @@ export const TodoListTable = ({ dataSource, onEdit, onDelete, ...props }) => {
       // rowKey={rowKey} //unique field from out dataset
       {...props}
     />
+  );
+};
+
+export const TodoForm = ({
+  title,
+  description,
+  tags,
+  inputErrors,
+  selectedTags,
+  onChangeInput,
+  onSelectTags,
+  onSave,
+}) => {
+  const [touch, setTouch] = useState({
+    title: false,
+    description: false,
+  });
+
+  const handleInputs = (e) => {
+    const field = e.target.name;
+    // const newTouchFields = { ... touch};
+    setTouch({ ...touch, [field]: true });
+    onChangeInput(e);
+  };
+
+  const handleSave = () => {
+    setTouch({ title: true, description: true });
+    if (!title || !description) {
+      return;
+    }
+    onSave();
+  };
+
+  return (
+    <Section className={styles.todo__input}>
+      <input
+        type="text"
+        value={title}
+        name={"title"}
+        onChange={(e) => handleInputs(e)}
+        // onChange={(onChangeInput)}
+        placeholder="Enter a new todo title..."
+      />
+      {touch.title && !title && <p>{inputErrors.title}</p>}
+      <textarea
+        value={description}
+        name={"description"}
+        onChange={(e) => handleInputs(e)}
+        // onChange={onChangeInput}
+        placeholder="Enter a new todo description..."
+      ></textarea>
+      {touch.description && !description && <p>{inputErrors.description}</p>}
+      <TodoTags
+        items={tags}
+        selectedItems={selectedTags}
+        onSelectItem={onSelectTags}
+      />
+      <button onClick={handleSave}>Save edits</button>
+    </Section>
   );
 };
