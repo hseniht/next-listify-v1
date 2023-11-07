@@ -1,7 +1,8 @@
 //Todo: Add modular list component here
 import { useState } from "react";
 import styles from "../../styles/pages/list.module.css";
-import { Button, Select, Space, Table, Tag, Tooltip } from "antd";
+import formStyle from "../../styles/ui/forms.module.css";
+import { Button, Select, Space, Table, Tag, Tooltip, Input } from "antd";
 // import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Section } from "../ui/layout";
@@ -169,29 +170,41 @@ export const TodoForm = ({
 
   return (
     <Section className={styles.todo__input}>
-      <input
+      <Input
         type="text"
         value={title}
         name={"title"}
         onChange={(e) => handleInputs(e)}
         // onChange={(onChangeInput)}
         placeholder="Enter a new todo title..."
+        status={touch.title && !title ? "error" : ""}
       />
-      {touch.title && !title && <p>{inputErrors.title}</p>}
-      <textarea
+      {touch.title && !title && (
+        <div className={formStyle.input__error}>{inputErrors.title}</div>
+      )}
+      <br />
+      <Input.TextArea
         value={description}
         name={"description"}
         onChange={(e) => handleInputs(e)}
         // onChange={onChangeInput}
         placeholder="Enter a new todo description..."
-      ></textarea>
-      {touch.description && !description && <p>{inputErrors.description}</p>}
+        status={touch.description && !description ? "error" : ""}
+      ></Input.TextArea>
+      {touch.description && !description && (
+        <div className={formStyle.input__error}>{inputErrors.description}</div>
+      )}
+      <br />
       <TodoTags
         items={tags}
         selectedItems={selectedTags}
         onSelectItem={onSelectTags}
       />
-      <button onClick={handleSave}>Save edits</button>
+      <br />
+      <br />
+      <Button type="primary" size={"small"} onClick={handleSave}>
+        Save
+      </Button>
     </Section>
   );
 };

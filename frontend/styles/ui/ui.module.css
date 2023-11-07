@@ -8,8 +8,8 @@
 .modal__box {
   background-color: white;
   width: 50%;
-  height: 50%;
-  transform: translate(50%, 50%);
+  height: 80vh;
+  transform: translate(50%, 10%);
   padding: 10px;
 }
 .modal__box--close-btn {

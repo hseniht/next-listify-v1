@@ -1,5 +1,6 @@
 .todo {
-  height: 100%;
+  height: calc(100% - 46px);
+  overflow: auto;
 }
 
 .todo__heading {
@@ -19,8 +20,8 @@
 .todo__input textarea {
   display: block;
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+  /* padding: 10px; */
+  /* margin-bottom: 10px; */
   box-sizing: border-box;
 }
 
