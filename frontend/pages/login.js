@@ -42,7 +42,7 @@ const Login = () => {
   const onFinish = async (values) => {
     const { email, password } = values;
     await login(email, password);
-    console.log("login success");
+    console.log("login processed");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Login failed:", errorInfo);
@@ -51,11 +51,10 @@ const Login = () => {
   return (
     <PageWrapper
       id={"loginPage"}
-      // className={"page__wrapper--login"}
       className={`${styles["page__wrapper--login"]}`}
     >
       <Card>
-        <h3>Login</h3>
+        <h3>Welcome</h3>
         <Form
           name="login"
           labelCol={{ span: 8 }}
@@ -67,7 +66,6 @@ const Login = () => {
           //   remember: true,
           // }}
           onFinish={onFinish}
-          // onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
@@ -120,7 +118,7 @@ const Login = () => {
             {/* Todo UI: Popup the error */}
             <Col>{error && <Text type="danger" style={{fontSize: "12px", }}>{error}</Text>}</Col>
             <Button type="primary" htmlType="submit">
-              Submit
+              Login
             </Button>
           </Form.Item>
         </Form>
