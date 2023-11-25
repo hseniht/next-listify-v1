@@ -16,6 +16,10 @@ const todoSchema = new Schema(
       type: Array,
       required: false,
     },
+    user_id: {
+      type: String,
+      required: true,
+    },
     // ... other fields as needed
   },
   { timestamps: true }
@@ -28,7 +32,8 @@ const tagSchema = new Schema({
 });
 
 // Create models based on the schemas
-const Todo_model = mongoose.model("todo", todoSchema);
+// const Todo_model = mongoose.model("todo", todoSchema);
+const Todo_model = mongoose.model("list", todoSchema); //use 'lists' table to store records
 const Tag_model = mongoose.model("tag", tagSchema);
 
 module.exports = {

@@ -9,3 +9,32 @@ body {
 #__next {
   height: 100%;
 }
+
+#mainHeader {
+  height: 46px;
+}
+
+/* main menu */
+.brand-container {
+  min-width: 50px;
+}
+
+.main-menu {
+  display: flex;
+  align-items: center;
+}
+.main-menu__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  line-height: 46px;
+}
+.main-menu__nav ul {
+  width: 50%;
+}
+
+.main-menu__nav .main-menu__status_menu {
+  display: flex;
+  align-items: center;
+}
