@@ -5,7 +5,7 @@ const { Tag_model, Todo_model } = require("./models/listModels");
 const listAPIRoutes = require("./routes/lists");
 const userAPIRoutes = require("./routes/user");
 const app = express();
-require("dotenv").config(); //for .env variables
+require("dotenv").config(); // for .env variables
 const port = process.env.PORT; // or any other port number you prefer
 
 // Enable JSON parsing for incoming requests body (middleware)
