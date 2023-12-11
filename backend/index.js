@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Enable CORS
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://next-listify-v1-api.vercel.app");
+  res.setHeader("Access-Control-Allow-Origin", "https://next-listify-v1.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", true); // If you need credentials
