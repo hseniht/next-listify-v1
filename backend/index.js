@@ -13,11 +13,24 @@ app.use(express.json());
 
 // Enable CORS
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000", process.env.FRONTEND_URL);
+  const allowedOrigins = ["http://localhost:3000", process.env.FRONTEND_URL];
+  const origin = req.headers.origin;
+
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "http://localhost:3000",
+    process.env.FRONTEND_URL
+  );
   res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", true); // If you need credentials
-  next(); //to continue run next function
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+  } else {
+    next(); // Continue with the main request
+  }
 });
 
 // Handle preflight requests (OPTIONS)
