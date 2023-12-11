@@ -16,6 +16,10 @@ app.use((req, res, next) => {
   const allowedOrigins = ["http://localhost:3000", process.env.FRONTEND_URL];
   const origin = req.headers.origin;
 
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader(
     "Access-Control-Allow-Origin",
     "http://localhost:3000",
