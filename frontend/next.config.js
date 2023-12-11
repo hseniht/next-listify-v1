@@ -4,6 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     customKey: "testCustomKey",
+    vercelUrl: "next-listify-v1-api.vercel.app"
   }
 }
 
