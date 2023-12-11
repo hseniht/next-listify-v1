@@ -1,7 +1,7 @@
 //url variables
 const baseURL =
   process.env.NODE_ENV === "production"
-    ? "https://next-listify-v1-api.vercel.app/"
+    ? "https://next-listify-v1-api.vercel.app"
     : "http://localhost:3001";
 
 console.log("debug: baseURL", baseURL);
