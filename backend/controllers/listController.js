@@ -1,5 +1,18 @@
 const { Tag_model, Todo_model } = require("../models/listModels");
 const mongoose = require("mongoose");
+
+// Helpers
+
+// get details of choosen tags from its collection
+const getFilteredTags = (tags, tagsCollection) => {
+  if (!Array.isArray(tags) || !Array.isArray(tagsCollection)) {
+    // Handle invalid input
+    return [];
+  }
+
+  return [...tagsCollection].filter((tag) => tags.includes(tag._id.toString()));
+};
+
 // GET all Todos
 const getTodos = async (req, res) => {
   const user_id = req.user._id; // we get this 'user' from our auth middleware
@@ -75,13 +88,17 @@ const createTodo = async (req, res) => {
   }
 
   try {
-    const newTodo = await Todo_model.create({
+    const result = await Todo_model.create({
       title,
       description,
       tags,
       user_id,
     });
-    res.status(201).json(newTodo);
+    const tagsC = await Tag_model.find({});
+    const filteredTags = getFilteredTags(tags, tagsC);
+    let todo = { ...result.toObject(), tagsDetail: filteredTags }; // result with the corresponding tags detail
+
+    res.status(201).json(todo);
   } catch (error) {
     console.error("Failed to save todo", error);
     res.status(400).json({ error: error.message });
@@ -127,7 +144,7 @@ const updateTodo = async (req, res) => {
   }
   const tags = req.body.tags;
   const tagsC = await Tag_model.find({});
-  const filteredTags = tagsC.filter((tag) => tags.includes(tag._id.toString()));
+  const filteredTags = getFilteredTags(tags, tagsC);
   let updatedTodo = { ...result.toObject(), tagsDetail: filteredTags }; // result with the corresponding tags detail
 
   return res.status(200).json(updatedTodo); // or can use 200 to return back content
