@@ -5,7 +5,7 @@ const { Tag_model, Todo_model } = require("./models/listModels");
 const listAPIRoutes = require("./routes/lists");
 const userAPIRoutes = require("./routes/user");
 const app = express();
-require("dotenv").config(); //for .env variables
+require("dotenv").config(); // for .env variables
 const port = process.env.PORT; // or any other port number you prefer
 
 // Enable JSON parsing for incoming requests body (middleware)
@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Enable CORS
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000", process.env.FRONTEND_URL);
+  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
   res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", true); // If you need credentials
