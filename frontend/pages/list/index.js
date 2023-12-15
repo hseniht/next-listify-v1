@@ -10,6 +10,7 @@ import { Section } from "../../components/ui/layout";
 import { TodoListTable, TodoForm } from "../../components/views/list";
 import { useTodosContext } from "../../hooks/useTodoListContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useLogout } from "../../hooks/useLogout";
 import { useRouter } from "next/router";
 
 const { Title } = Typography;
@@ -18,6 +19,7 @@ export default function ListPage() {
   const { todos, dispatch } = useTodosContext();
   const { user } = useAuthContext();
   const router = useRouter();
+  const { logout } = useLogout();
 
   useEffect(() => {
     const initialFetch = async () => {
@@ -30,15 +32,34 @@ export default function ListPage() {
             Authorization: `Bearer ${user.token}`,
           },
         });
+
+        if (!todosResponse.ok) {
+          if (todosResponse.status === 401) {
+            // Handle Unauthorized (401) specifically
+            console.error(
+              "Unauthorized access. Redirect to login or refresh token."
+            );
+            logout();
+          } else {
+            throw new Error(
+              `Failed to fetch todos. Status: ${todosResponse.status}. ${todosResponse.statusText}`
+            );
+          }
+        }
+
+        initialTodos = await todosResponse.json();
+        dispatch({ type: "SET_TODOS", payload: initialTodos });
+
         const tagsResponse = await fetch(TAGS_API_URL);
 
-        if (todosResponse.ok) {
-          initialTodos = await todosResponse.json();
-          dispatch({ type: "SET_TODOS", payload: initialTodos });
-        }
         if (tagsResponse.ok) {
           initialTags = await tagsResponse.json();
           setTags(initialTags);
+        } else {
+          // Handle other errors
+          throw new Error(
+            `Failed to fetch tags. Status: ${tagsResponse.status}. ${tagsResponse.statusText}`
+          );
         }
       } catch (error) {
         console.error("Failed to fetch todos:", error);
